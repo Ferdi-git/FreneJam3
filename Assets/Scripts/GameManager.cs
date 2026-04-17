@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     private bool isAlive = true;
 
     [SerializeField] TypeEvent[] listEvents;
-
+    [SerializeField] NoteSpawner noteSpawner;
 
 
 
@@ -18,22 +18,16 @@ public class GameManager : MonoBehaviour
     {
         textMeshPro.text = nbr.ToString();
         StartCoroutine(Game());
-        StartCoroutine(Kill());
     }
 
-    private IEnumerator Kill()
-    {
-        yield return new WaitForSeconds(600);
-        isAlive = false;
-    }
 
     private IEnumerator Game()
     {
-        while (isAlive)
+        int i = 0;
+        while (i < listEvents.Length)
         {
             yield return new WaitForSeconds(3);
-
-
+            InvokeEvent(listEvents[i]);
         }
 
     }
@@ -43,11 +37,14 @@ public class GameManager : MonoBehaviour
         switch(tEvent)
         {
             case TypeEvent.simpleNote:
+                noteSpawner.SpawnNote(2);
                 break;
             case TypeEvent.fastNote:
-                break ;
+                noteSpawner.SpawnNote(1);
+                break;
             case TypeEvent.slowNote:
-                break ;
+                noteSpawner.SpawnNote(3);
+                break;
             case TypeEvent.simpleZoneDetect:
                 break ;
             case TypeEvent.bigZoneDetect:

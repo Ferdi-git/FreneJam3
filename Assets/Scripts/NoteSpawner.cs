@@ -19,9 +19,9 @@ public class NoteSpawner : MonoBehaviour
 
     }
 
-    public void SpawnNote()
+    public void SpawnNote(float time)
     {
-        Instantiate(notePrefab);
-
+        var newNote = Instantiate(notePrefab);
+        newNote.GetComponent<SingleNote>().timeToReachMiddle = time;
     }
 }

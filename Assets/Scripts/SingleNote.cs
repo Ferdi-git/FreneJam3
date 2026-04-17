@@ -4,7 +4,7 @@ public class SingleNote : MonoBehaviour
 {
     [SerializeField] SOEventGame gameEventGame;
     [SerializeField] float destroyWindow = 0.2f; // time window after spike
-
+    public float timeToReachMiddle = 2;
     private float spikeTime = -999f;
 
     private void OnEnable()
@@ -17,7 +17,7 @@ public class SingleNote : MonoBehaviour
     }
     private void Start()
     {
-        transform.DOMove(new Vector3(0, 0, 0), 2).OnComplete(() => Destroy(gameObject));
+        transform.DOMove(new Vector3(0, 0, 0), timeToReachMiddle).OnComplete(() => Destroy(gameObject));
     }
     private void Update()
     {
