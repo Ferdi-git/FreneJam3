@@ -13,7 +13,7 @@ public class NoteSpawner : MonoBehaviour
     {
         while (true)
         {
-            SpawnNote();
+            SpawnNote(2);
             yield return new WaitForSeconds(5);
         }
 
