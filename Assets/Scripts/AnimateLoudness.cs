@@ -5,17 +5,19 @@ using UnityEngine;
 public class AnimateLoudness : MonoBehaviour
 {
     [SerializeField] VoiceDetector voiceDetector;
+    [SerializeField] SOEventGame eventGame;
     [SerializeField] float mult = 100f;
     [SerializeField] int nbrFile = 5;
     [SerializeField] float spikeThresholdMultiplier = 2.5f;
     [SerializeField] float spikeMinAbsolute = 0.3f;
     [SerializeField] float spikeCooldown = 0.5f;
+    [SerializeField] float baselineLerp = 0.02f;  // new
 
     private Queue<float> oldLoudness = new Queue<float>();
     private float loudness;
     private float moyenne;
+    private float baseline = 0f;  // new
     private float lastSpikeTime = -999f;
-     
 
     void FixedUpdate()
     {
@@ -23,15 +25,15 @@ public class AnimateLoudness : MonoBehaviour
             Microphone.GetPosition(Microphone.devices[0]),
             voiceDetector.clip) * mult;
 
+        baseline = Mathf.Lerp(baseline, loudness, baselineLerp);  // new
+
         AddToElementStack(loudness);
         moyenne = GetMoyenne();
-
         if (DetectSpike(loudness, moyenne))
         {
             Debug.Log("LOUD NOISE DETECTED!");
             OnSpikeDetected();
         }
-
         transform.localScale = new Vector3(moyenne, moyenne, moyenne);
     }
 
@@ -57,7 +59,7 @@ public class AnimateLoudness : MonoBehaviour
     {
         if (Time.time - lastSpikeTime < spikeCooldown) return false;
         if (current < spikeMinAbsolute) return false;
-        if (current >= average * spikeThresholdMultiplier)
+        if (current >= baseline * spikeThresholdMultiplier)  // changed: average -> baseline
         {
             lastSpikeTime = Time.time;
             return true;
@@ -67,6 +69,6 @@ public class AnimateLoudness : MonoBehaviour
 
     private void OnSpikeDetected()
     {
-
+        eventGame.InvokeSpikeCheck();
     }
 }

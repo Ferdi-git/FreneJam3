@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
 
-public class SOEventGame : MonoBehaviour
+[CreateAssetMenu]
+public class SOEventGame : ScriptableObject
 {
     public event Action SpikeCheck;
 
     public void InvokeSpikeCheck()
     {
-        SpikeCheck.Invoke();
+        SpikeCheck?.Invoke();
     }
 
 
