@@ -1,22 +1,36 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
 
     public TextMeshPro textMeshPro;
-    private int nbr = 0 ;
-    private bool isAlive = true;
+    private int score = 0 ;
+    [SerializeField] private float BPM;
+    [SerializeField] NoteSpawner noteSpawner;
+    [SerializeField] SOEventGame soEventGame;
+    [SerializeField] GameObject winScreen;
+    [SerializeField] TextMeshPro winScore;
 
     [SerializeField] TypeEvent[] listEvents;
-    [SerializeField] NoteSpawner noteSpawner;
 
+    private void OnEnable()
+    {
+        soEventGame.PointWon += WinPoints;
+        soEventGame.Win += EndGame;
+    }
+    private void OnDisable()
+    {
+        soEventGame.PointWon -= WinPoints;
+        soEventGame.Win -= EndGame;
 
+    }
 
     void Start()
     {
-        textMeshPro.text = nbr.ToString();
+        textMeshPro.text = score.ToString();
         StartCoroutine(Game());
     }
 
@@ -26,7 +40,7 @@ public class GameManager : MonoBehaviour
         int i = 0;
         while (i < listEvents.Length)
         {
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(BPM);
             InvokeEvent(listEvents[i]);
         }
 
@@ -68,6 +82,27 @@ public class GameManager : MonoBehaviour
 
 
 
+    public void WinPoints(int i)
+    {
+        score += i;
+        textMeshPro.text = score.ToString();
+    }
+
+
+    private void EndGame()
+    {
+        winScreen.SetActive(true);
+        StopAllCoroutines();
+        winScore.text = score.ToString();
+        StartCoroutine(CoRetry());
+    }
+
+
+
+    private IEnumerator CoRetry()
+    {
+        yield return new WaitForSeconds(5f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 }
 
-// simple note fast note slow note zone detect 
